@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self, stdin};
 
 fn main() {
     const OPTIONS_LIST: &str = r#" Welcome to TO-DO List CLI APPLICATION 
@@ -31,7 +31,7 @@ fn main() {
         } else if command.trim().to_lowercase().as_str()=="view" {
             view_all_tasks(&tasks_list)
         } else if command.trim().to_lowercase().as_str()=="update" {
-            update_a_task()
+            update_a_task(&mut tasks_list)
         } else if command.trim().to_lowercase().as_str()=="delete" {
             delete_a_task()
         } else if command.trim().to_lowercase().as_str()=="export" {
@@ -87,9 +87,30 @@ fn view_all_tasks(tasks_store: &Vec<TaskFormat>) {
 
 }
 
-fn update_a_task() {
-    println!("Updating the task")
+fn update_a_task(tasks_store: &mut Vec<TaskFormat>) {
+    println!("Please enter the task ID to mark it as complete");
+    let mut task_id = String::new();
+    let _ = io::stdin().read_line(&mut task_id);
+
+    //First check if the ID exists or not
+    for task in tasks_store {
+        if task.id==task_id.trim().parse().unwrap(){
+            let description = &task.description;
+            task.status = match task.status {
+                Status::Completed => {
+                    println!("It is already marked Completed");
+                    Status::Completed
+                },
+                Status::Active => {
+                    println!("{description} marked Completed");
+                    Status::Completed
+                }
+            }
+        }
+    }
+    
 }
+
 
 fn delete_a_task() {
     println!("deleting a task")
