@@ -6,9 +6,7 @@ fn main() {
     1) Add a Task (add)
     2) View Tasks (view)
     3) Update Task Status (update)
-    4) Delete a Task (delete)
-    5) Export Task list (export)
-    6) Load Task List (load) "#;
+    4) Delete a Task (delete) "#;
 
     // enum Options {
     //     add,
@@ -26,18 +24,22 @@ fn main() {
         let _ = io::stdin().read_line(&mut command);
         println!("\n");
         // println!("command: {command}");
-        
-        if command.trim().to_lowercase().as_str()=="add" {
-            add_a_task(&mut tasks_list, id_counter);
-            id_counter = id_counter + 1;
-        } else if command.trim().to_lowercase().as_str()=="view" {
-            view_all_tasks(&tasks_list)
-        } else if command.trim().to_lowercase().as_str()=="update" {
-            update_a_task(&mut tasks_list)
-        } else if command.trim().to_lowercase().as_str()=="delete" {
-            delete_a_task(&mut tasks_list)
-        } else {
-            println!("Didn't recognise: {}, please enter commands from the option shown:\n", command.trim())
+        let input = command.trim().to_ascii_lowercase();
+        match input.as_str() {
+            "add"=>{
+                add_a_task(&mut tasks_list, id_counter);
+                id_counter = id_counter + 1;
+            },
+            "view" => view_all_tasks(&tasks_list),
+            "update" => update_a_task(&mut tasks_list),
+            "delete" => delete_a_task(&mut tasks_list),
+            "exit" => {
+                println!("Exiting....");
+                break;
+            },
+            _ => {
+                println!("Didn't recognise: {}, please enter commands from the option shown:\n", command.trim())
+            }
         }
     }
 }
