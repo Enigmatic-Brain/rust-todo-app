@@ -49,14 +49,14 @@ enum Status {
     Completed
 }
 
-struct TaskFormat {
+struct Task {
     id: u32,
     description: String,
     status: Status
 }
 
 
-fn add_a_task(tasks_store: &mut Vec<TaskFormat>, counter: u32) {
+fn add_a_task(tasks_store: &mut Vec<Task>, counter: u32) {
     const REQUEST_FOR_DESC: &str = r#"Please enter the task description."#;
     println!("{REQUEST_FOR_DESC}");
 
@@ -64,7 +64,7 @@ fn add_a_task(tasks_store: &mut Vec<TaskFormat>, counter: u32) {
     let _ = io::stdin().read_line(&mut task_description);
 
     let id = counter + 1;
-    tasks_store.push(TaskFormat{
+    tasks_store.push(Task{
         id,
         description: task_description,
         status: Status::Active
@@ -74,7 +74,7 @@ fn add_a_task(tasks_store: &mut Vec<TaskFormat>, counter: u32) {
 }
 
 
-fn view_all_tasks(tasks_store: &Vec<TaskFormat>) {
+fn view_all_tasks(tasks_store: &Vec<Task>) {
     
     println!("Here are all the tasks: ");
     for task in tasks_store {
@@ -90,7 +90,7 @@ fn view_all_tasks(tasks_store: &Vec<TaskFormat>) {
 }
 
 
-fn update_a_task(tasks_store: &mut Vec<TaskFormat>) {
+fn update_a_task(tasks_store: &mut Vec<Task>) {
     println!("Please enter the task ID to mark it as complete");
     let mut task_id = String::new();
     let _ = io::stdin().read_line(&mut task_id);
@@ -106,16 +106,12 @@ fn update_a_task(tasks_store: &mut Vec<TaskFormat>) {
     if let Some(position) = tasks_store.iter().position(|task| task.id==parsed_id){
         let matched_description = &tasks_store[position];
         let description = &matched_description.description;
-            tasks_store[position].status = match matched_description.status {
-                Status::Completed => {
-                    println!("It is already marked Completed");
-                    Status::Completed
-                },
-                Status::Active => {
-                    println!("{description} marked Completed");
-                    Status::Completed
-                }
-            }
+        if matches!(matched_description.status, Status::Completed){
+            println!("It is already marked complete")
+        } else {
+            println!("{} marked Completed", description);
+            tasks_store[position].status = Status::Completed;
+        }
     } else {
         println!("No task found with the given ID.")
     }
@@ -123,7 +119,7 @@ fn update_a_task(tasks_store: &mut Vec<TaskFormat>) {
 }
 
 
-fn delete_a_task(tasks_store: &mut Vec<TaskFormat>) {
+fn delete_a_task(tasks_store: &mut Vec<Task>) {
 
     println!("Please provide the task id to delete:");
     let mut to_delete_task_id: String = String::new();
