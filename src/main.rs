@@ -101,11 +101,10 @@ fn update_a_task(tasks_store: &mut Vec<TaskFormat>) {
         }
     };
 
-    //First check if the ID exists or not
-    for task in tasks_store {
-        if task.id==parsed_id{
-            let description = &task.description;
-            task.status = match task.status {
+    if let Some(position) = tasks_store.iter().position(|task| task.id==parsed_id){
+        let matched_description = &tasks_store[position];
+        let description = &matched_description.description;
+            tasks_store[position].status = match matched_description.status {
                 Status::Completed => {
                     println!("It is already marked Completed");
                     Status::Completed
@@ -115,7 +114,8 @@ fn update_a_task(tasks_store: &mut Vec<TaskFormat>) {
                     Status::Completed
                 }
             }
-        }
+    } else {
+        println!("No task found with the given ID.")
     }
     
 }
